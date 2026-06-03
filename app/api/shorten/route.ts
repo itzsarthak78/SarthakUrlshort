@@ -4,18 +4,15 @@ import { NextRequest, NextResponse } from 'next/server';
 function isValidUrl(url: string): boolean {
   try { new URL(url); return true; } catch { return false; }
 }
-function generateSlug(len = 6): string {
-  return Math.random().toString(36).substring(2, 2 + len);
+
+function generateSlug(length = 6): string {
+  return Math.random().toString(36).substring(2, 2 + length);
 }
 
 export async function POST(req: NextRequest) {
   try {
-    // Check API key from Authorization header
     const authHeader = req.headers.get('authorization');
     let apiKey = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
-    
-    // Allow public usage without key (optional, you can restrict)
-    const isPublic = !apiKey;
     
     let longUrl: string;
     try {
@@ -37,25 +34,22 @@ export async function POST(req: NextRequest) {
       }
       const today = new Date().toISOString().slice(0, 10);
       if (keyData.lastReset !== today) {
-        // reset counter
         await kv.hset(`apikey:${apiKey}`, { requests: 0, lastReset: today });
         keyData.requests = 0;
       }
       if (keyData.requests >= 100) {
         return NextResponse.json({ error: 'Daily limit reached (100 requests/day)' }, { status: 429 });
       }
-      // increment request count
       await kv.hincrby(`apikey:${apiKey}`, 'requests', 1);
     }
 
-    // generate unique slug
     let slug = '';
     let attempts = 0;
     do {
       slug = generateSlug();
       attempts++;
       if (attempts > 10) {
-        return NextResponse.json({ error: 'Failed to generate slug' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to generate unique slug' }, { status: 500 });
       }
     } while (await kv.get(slug));
 
@@ -66,6 +60,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ shortUrl, slug });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
