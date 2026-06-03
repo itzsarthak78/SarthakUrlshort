@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Key, Plus, Trash2, Copy, Check, Loader2, Activity, ArrowLeft } from 'lucide-react';
+import { Key, Plus, Trash2, Copy, Check, Loader2, Activity, ArrowLeft, Shield, Clock } from 'lucide-react';
+import { useTheme } from '../theme-provider';
 
 interface ApiKey {
   key: string;
@@ -16,6 +17,7 @@ export default function Dashboard() {
   const [newKeyName, setNewKeyName] = useState('');
   const [loading, setLoading] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const { theme } = useTheme();
 
   const fetchKeys = async () => {
     const res = await fetch('/api/keys');
@@ -47,7 +49,7 @@ export default function Dashboard() {
   };
 
   const deleteKey = async (key: string) => {
-    if (!confirm('Delete this API key?')) return;
+    if (!confirm('Delete this API key? It cannot be undone.')) return;
     await fetch('/api/keys', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -59,70 +61,124 @@ export default function Dashboard() {
   const copyToClipboard = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
     setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 1500);
+    setTimeout(() => setCopiedKey(null), 2000);
+  };
+
+  const truncateKey = (key: string) => {
+    if (key.length <= 20) return key;
+    return `${key.slice(0, 14)}...${key.slice(-8)}`;
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-background to-background/90 p-6">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">Developer Dashboard</h1>
-            <p className="text-muted-foreground">Manage your API keys – 100 requests/day per key</p>
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/90 pb-16">
+      {/* Header */}
+      <header className="sticky top-0 z-10 backdrop-blur-md bg-background/80 border-b border-border px-4 py-3">
+        <div className="max-w-2xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Shield className="w-5 h-5 text-primary" />
+            <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+              API Dashboard
+            </h1>
           </div>
-          <a href="/" className="text-primary hover:text-primary/80 text-sm border border-primary/30 px-4 py-2 rounded-lg flex items-center gap-2">
-            <ArrowLeft className="w-4 h-4" /> Back to Shortener
+          <a
+            href="/"
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back</span>
           </a>
         </div>
+      </header>
 
-        {/* Generate new key */}
-        <div className="bg-card rounded-2xl border border-border p-6 mb-8">
-          <h2 className="text-xl font-semibold flex items-center gap-2 mb-4"><Plus className="w-5 h-5" /> Generate new API key</h2>
-          <div className="flex gap-3">
+      <main className="max-w-2xl mx-auto px-4 py-6">
+        {/* Create new key card */}
+        <div className="bg-card rounded-2xl border border-border p-5 mb-8 shadow-sm">
+          <div className="flex items-center gap-2 mb-2">
+            <Plus className="w-5 h-5 text-primary" />
+            <h2 className="font-semibold text-lg">Create new API key</h2>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            Each key gets <strong className="text-primary">100 requests/day</strong>. Name it so you remember the project.
+          </p>
+
+          {/* Fixed layout: vertical on mobile, horizontal on larger screens */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               value={newKeyName}
               onChange={(e) => setNewKeyName(e.target.value)}
-              placeholder="e.g., My Project, Mobile App"
-              className="flex-1 px-4 py-2 rounded-xl bg-background border border-border input-focus"
+              placeholder="e.g., My Mobile App, Website"
+              className="flex-1 px-4 py-3 rounded-xl bg-background border border-border focus:ring-2 focus:ring-primary/50 outline-none text-base"
             />
             <button
               onClick={generateKey}
               disabled={loading || !newKeyName.trim()}
-              className="bg-primary hover:bg-primary/90 px-6 py-2 rounded-xl flex items-center gap-2 disabled:opacity-50 text-primary-foreground"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition sm:w-auto w-full"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
-              Create
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Key className="w-5 h-5" />}
+              {loading ? 'Creating...' : 'Create Key'}
             </button>
           </div>
-          <p className="text-xs text-muted-foreground mt-2">Each key can make up to 100 shorten requests per day.</p>
         </div>
 
-        {/* List of keys */}
-        <div className="bg-card rounded-2xl border border-border p-6">
-          <h2 className="text-xl font-semibold flex items-center gap-2 mb-4"><Key className="w-5 h-5" /> Your API Keys</h2>
+        {/* Your API keys section */}
+        <div className="bg-card rounded-2xl border border-border p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Key className="w-5 h-5 text-primary" />
+            <h2 className="font-semibold text-lg">Your API Keys</h2>
+          </div>
+
           {keys.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No keys yet. Create your first API key above.</p>
+            <div className="text-center py-10 text-muted-foreground">
+              <Key className="w-12 h-12 mx-auto mb-3 opacity-30" />
+              <p>No keys yet. Create your first API key above.</p>
+            </div>
           ) : (
             <div className="space-y-4">
               {keys.map((k) => (
-                <div key={k.key} className="border border-primary/20 rounded-xl p-4 bg-background/50">
-                  <div className="flex flex-wrap justify-between items-start gap-3">
-                    <div>
-                      <div className="font-semibold text-primary">{k.name}</div>
-                      <div className="text-xs font-mono text-muted-foreground break-all mt-1">Key: {k.key.slice(0, 15)}...{k.key.slice(-10)}</div>
-                      <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
-                        <span>Created: {new Date(k.createdAt).toLocaleDateString()}</span>
-                        <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> {k.requests || 0} / 100 today</span>
-                      </div>
+                <div
+                  key={k.key}
+                  className="border border-primary/20 rounded-xl p-4 bg-background/50 transition hover:border-primary/40"
+                >
+                  {/* Key name and delete button */}
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="font-semibold text-primary text-lg">{k.name}</div>
+                    <button
+                      onClick={() => deleteKey(k.key)}
+                      className="p-2 hover:bg-destructive/10 rounded-lg transition text-destructive"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* API key (truncated) + copy */}
+                  <div className="flex items-center justify-between gap-2 bg-background rounded-lg p-2 border border-border mt-2">
+                    <code className="text-xs font-mono text-muted-foreground break-all">
+                      {truncateKey(k.key)}
+                    </code>
+                    <button
+                      onClick={() => copyToClipboard(k.key, k.key)}
+                      className="p-2 hover:bg-primary/10 rounded-md transition shrink-0"
+                    >
+                      {copiedKey === k.key ? (
+                        <Check className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="flex flex-wrap gap-4 mt-3 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {new Date(k.createdAt).toLocaleDateString()}
                     </div>
-                    <div className="flex gap-2">
-                      <button onClick={() => copyToClipboard(k.key, k.key)} className="p-2 hover:bg-primary/20 rounded-lg transition">
-                        {copiedKey === k.key ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-                      </button>
-                      <button onClick={() => deleteKey(k.key)} className="p-2 hover:bg-destructive/20 rounded-lg transition">
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </button>
+                    <div className="flex items-center gap-1">
+                      <Activity className="w-3 h-3" />
+                      <span>
+                        {k.requests || 0} / {k.dailyLimit} today
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -133,15 +189,15 @@ export default function Dashboard() {
 
         {/* API usage example */}
         <div className="mt-8 bg-card rounded-xl p-4 border border-border">
-          <p className="text-primary font-mono mb-2">📌 Usage example:</p>
-          <pre className="bg-black/50 p-3 rounded-lg overflow-x-auto text-sm text-muted-foreground">
-{`curl -X POST https://yourdomain.vercel.app/api/shorten \\
+          <p className="text-primary font-mono text-sm mb-2">📘 Example request</p>
+          <pre className="bg-black/50 p-3 rounded-lg overflow-x-auto text-xs text-muted-foreground">
+{`curl -X POST ${typeof window !== 'undefined' ? window.location.origin : 'https://yourdomain.vercel.app'}/api/shorten \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"longUrl": "https://example.com"}'`}
           </pre>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
