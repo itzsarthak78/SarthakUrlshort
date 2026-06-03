@@ -1,7 +1,9 @@
 import { kv } from '@vercel/kv';
 import { notFound, redirect } from 'next/navigation';
 
-interface PageProps { params: { slug: string } }
+interface PageProps {
+  params: { slug: string };
+}
 
 export default async function RedirectPage({ params }: PageProps) {
   const { slug } = params;
