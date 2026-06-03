@@ -12,11 +12,12 @@ export async function POST(req: NextRequest) {
   
   const apiKey = generateApiKey();
   const now = Date.now();
+  const today = new Date().toISOString().slice(0, 10);
   await kv.hset(`apikey:${apiKey}`, {
     name,
     createdAt: now,
     requests: 0,
-    lastReset: new Date().toISOString().slice(0, 10),
+    lastReset: today,
   });
   await kv.sadd('apikeys:list', apiKey);
   return NextResponse.json({ apiKey });
