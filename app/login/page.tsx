@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Loader2, Link as LinkIcon } from 'lucide-react';
 
@@ -24,7 +24,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 to-white dark:from-gray-900 dark:to-gray-950 p-4">
-      {/* Logo + Brand */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center justify-center gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl px-6 py-3 shadow-sm border border-purple-100 dark:border-purple-900/30">
           <LinkIcon className="w-6 h-6 text-purple-600" />
@@ -35,17 +34,11 @@ export default function Login() {
         <p className="text-gray-500 dark:text-gray-400 mt-2">Sign in to shorten URLs</p>
       </div>
 
-      {/* Login Card */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-purple-100 dark:border-gray-700 p-6 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
-          Welcome Back
-        </h1>
-
+        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">Welcome Back</h1>
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Email Address
-            </label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -58,11 +51,8 @@ export default function Login() {
               />
             </div>
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -75,28 +65,15 @@ export default function Login() {
               />
             </div>
           </div>
-
-          {error && (
-            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-              <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold py-2.5 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 shadow-md disabled:opacity-70"
-          >
+          {error && <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl"><p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p></div>}
+          <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold py-2.5 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 shadow-md disabled:opacity-70">
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-
         <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
           Don't have an account?{' '}
-          <a href="/register" className="text-purple-600 font-semibold hover:underline">
-            Create one
-          </a>
+          <a href="/register" className="text-purple-600 font-semibold hover:underline">Create one</a>
         </p>
       </div>
     </div>
