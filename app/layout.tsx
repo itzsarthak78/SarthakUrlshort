@@ -4,7 +4,11 @@ import { Inter, Pacifico } from 'next/font/google';
 import { ThemeProvider } from './theme-provider';
 
 const inter = Inter({ subsets: ['latin'] });
-const pacifico = Pacifico({ weight: '400', subsets: ['latin'], variable: '--font-pacifico' });
+const pacifico = Pacifico({ 
+  weight: '400', 
+  subsets: ['latin'], 
+  variable: '--font-pacifico' 
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sarthakurlshort.vercel.app'),
@@ -44,7 +48,11 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} ${pacifico.variable}`}>
