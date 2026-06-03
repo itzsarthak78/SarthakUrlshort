@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
 import { Mail, Lock, User, Loader2, Link as LinkIcon } from 'lucide-react';
 
 export default function Register() {
@@ -35,9 +35,7 @@ export default function Register() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl px-6 py-3 shadow-sm">
             <LinkIcon className="w-6 h-6 text-purple-600" />
-            <span className="font-['Pacifico'] text-3xl bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">
-              Sarthak
-            </span>
+            <span className="font-['Pacifico'] text-3xl bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">Sarthak</span>
           </div>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 text-center max-w-md w-full">
@@ -48,9 +46,7 @@ export default function Register() {
           <p className="text-gray-600 dark:text-gray-300">
             We sent a confirmation link to <strong className="text-purple-600">{email}</strong>. Click it to activate your account.
           </p>
-          <a href="/login" className="inline-block mt-5 text-purple-600 font-medium hover:underline">
-            Back to Sign In
-          </a>
+          <a href="/login" className="inline-block mt-5 text-purple-600 font-medium hover:underline">Back to Sign In</a>
         </div>
       </div>
     );
@@ -58,28 +54,19 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 to-white dark:from-gray-900 dark:to-gray-950 p-4">
-      {/* Logo */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center justify-center gap-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl px-6 py-3 shadow-sm border border-purple-100 dark:border-purple-900/30">
           <LinkIcon className="w-6 h-6 text-purple-600" />
-          <span className="font-['Pacifico'] text-3xl bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">
-            Sarthak
-          </span>
+          <span className="font-['Pacifico'] text-3xl bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">Sarthak</span>
         </div>
         <p className="text-gray-500 dark:text-gray-400 mt-2">Create a free account</p>
       </div>
 
-      {/* Register Card */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-purple-100 dark:border-gray-700 p-6 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
-          Get Started
-        </h1>
-
+        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">Get Started</h1>
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Username
-            </label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -92,11 +79,8 @@ export default function Register() {
               />
             </div>
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Email
-            </label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -109,11 +93,8 @@ export default function Register() {
               />
             </div>
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -126,28 +107,15 @@ export default function Register() {
               />
             </div>
           </div>
-
-          {error && (
-            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-              <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold py-2.5 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 shadow-md disabled:opacity-70"
-          >
+          {error && <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl"><p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p></div>}
+          <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold py-2.5 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 shadow-md disabled:opacity-70">
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
             {loading ? 'Creating account...' : 'Sign Up'}
           </button>
         </form>
-
         <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
           Already have an account?{' '}
-          <a href="/login" className="text-purple-600 font-semibold hover:underline">
-            Sign in
-          </a>
+          <a href="/login" className="text-purple-600 font-semibold hover:underline">Sign in</a>
         </p>
       </div>
     </div>
