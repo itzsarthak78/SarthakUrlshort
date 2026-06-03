@@ -1,3 +1,45 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --purple: #8b5cf6;
+  --purple-dark: #6d28d9;
+  --purple-light: #c4b5fd;
+  --purple-glow: rgba(139, 92, 246, 0.4);
+}
+
+body {
+  background: radial-gradient(circle at 10% 20%, #1e1b2e, #0f0c1f);
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* 3D card effect */
+.card-3d {
+  transform-style: preserve-3d;
+  transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
+  transition: all 0.3s ease;
+  box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5);
+}
+.card-3d:hover {
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(-5px);
+  box-shadow: 0 35px 50px -15px var(--purple-glow);
+}
+
+.glow-border {
+  border-image: linear-gradient(135deg, var(--purple), var(--purple-light));
+  border-image-slice: 1;
+}
+
+/* custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1e1b2e;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--purple);
+  border-radius: 10px;
+}
