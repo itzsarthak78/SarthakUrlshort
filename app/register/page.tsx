@@ -32,11 +32,11 @@ export default function Register() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-white p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-6 text-center max-w-md">
           <h1 className="text-xl font-semibold mb-2">Check your email</h1>
-          <p>We sent a confirmation link to <strong>{email}</strong></p>
-          <a href="/login" className="text-purple-600 mt-4 inline-block">Back to Login</a>
+          <p className="text-gray-600">We sent a confirmation link to <strong>{email}</strong></p>
+          <a href="/login" className="inline-block mt-4 text-purple-600">Back to Login</a>
         </div>
       </div>
     );
