@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { supabase } from "../../lib/supabaseClient";
+import { useRouter } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
+import { useTheme } from './theme-provider';
 import {
   Link,
   Copy,
@@ -18,10 +21,14 @@ import {
   X,
   BarChart3,
   Infinity,
+  User
 } from 'lucide-react';
-import { useTheme } from './theme-provider';
 
 export default function Home() {
+  const router = useRouter();
+  const [session, setSession] = useState(null);
+  const [loadingAuth, setLoadingAuth] = useState(true);
+  
   const [longUrl, setLongUrl] = useState('');
   const [shortUrl, setShortUrl] = useState('');
   const [error, setError] = useState('');
@@ -29,6 +36,18 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const { theme, toggleTheme } = useTheme();
+
+  // Auth check – redirect to register if not logged in
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        router.push('/register');
+      } else {
+        setSession(session);
+      }
+      setLoadingAuth(false);
+    });
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,20 +97,30 @@ export default function Home() {
     }
   };
 
+  if (loadingAuth) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-600 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (!session) return null; // redirecting
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-background/80">
-      {/* Navbar with cursive "Sarthak" logo */}
+      {/* Navbar */}
       <nav className="sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
         <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Link className="w-6 h-6 text-primary" />
-            <span className="font-['Pacifico'] text-2xl bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+            <span className="font-['Pacifico'] text-2xl bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">
               Sarthak
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <a href="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition">
-              API
+            <a href="/profile" className="text-sm text-muted-foreground hover:text-primary transition flex items-center gap-1">
+              <User className="w-4 h-4" /> Profile
             </a>
             <button
               onClick={toggleTheme}
@@ -105,7 +134,7 @@ export default function Home() {
 
       {/* Hero */}
       <section className="text-center py-12 px-4">
-        <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">
           Short URLs, Big Impact
         </h1>
         <p className="text-muted-foreground mt-3 max-w-md mx-auto">
@@ -134,7 +163,7 @@ export default function Home() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70"
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold py-3 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 shadow-md disabled:opacity-70"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
               {loading ? 'Shortening...' : 'Shorten URL'}
@@ -179,19 +208,19 @@ export default function Home() {
         {/* Feature grid */}
         <div className="grid grid-cols-2 gap-4 mt-12">
           <div className="flex items-center gap-3 p-3 bg-card rounded-xl border border-border">
-            <Zap className="w-6 h-6 text-primary" />
+            <Zap className="w-6 h-6 text-purple-500" />
             <span className="text-sm font-medium">Fast redirects</span>
           </div>
           <div className="flex items-center gap-3 p-3 bg-card rounded-xl border border-border">
-            <Shield className="w-6 h-6 text-primary" />
+            <Shield className="w-6 h-6 text-purple-500" />
             <span className="text-sm font-medium">No spam</span>
           </div>
           <div className="flex items-center gap-3 p-3 bg-card rounded-xl border border-border">
-            <BarChart3 className="w-6 h-6 text-primary" />
+            <BarChart3 className="w-6 h-6 text-purple-500" />
             <span className="text-sm font-medium">Analytics ready</span>
           </div>
           <div className="flex items-center gap-3 p-3 bg-card rounded-xl border border-border">
-            <Infinity className="w-6 h-6 text-primary" />
+            <Infinity className="w-6 h-6 text-purple-500" />
             <span className="text-sm font-medium">Unlimited links</span>
           </div>
         </div>
@@ -214,7 +243,7 @@ export default function Home() {
               </div>
               <button
                 onClick={downloadQR}
-                className="mt-5 w-full flex items-center justify-center gap-2 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition"
+                className="mt-5 w-full flex items-center justify-center gap-2 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
               >
                 <Download className="w-4 h-4" /> Download QR
               </button>
