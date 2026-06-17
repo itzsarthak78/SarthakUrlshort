@@ -1,5 +1,5 @@
 export const metadata: Metadata = {
-  metadataBase: new URL('https://sarthakurlshort.vercel.app'),
+  metadataBase: new URL('https://sarthakurll.vercel.app'),
 
   verification: {
     google: '2UFijFK-Fb4U8Hw9hti7d-TyD5-i1LtauXgdXcuMGl0',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title: 'Sarthak Shortener | Free URL Shortener',
     description:
       'Shorten long URLs instantly with Sarthak Shortener. Generate QR codes and create shareable short links.',
-    url: 'https://sarthakurlshort.vercel.app',
+    url: 'https://sarthakurll.vercel.app',
     siteName: 'Sarthak Shortener',
     images: [
       {
